@@ -2,21 +2,20 @@ package com.symbat.grocerystore;
 
 public class Product {
 
-    // 1. Private fields
-    private int productId;
-    private String name;
-    private double price;
-    private int stockQuantity;
+    // -------- PARENT PROTECTED FIELDS (MIN 4) --------
+    protected int productId;
+    protected String name;
+    protected double price;
+    protected int stockQuantity;
 
-    // 2. Parameterized constructor
+    // -------- CONSTRUCTORS --------
     public Product(int productId, String name, double price, int stockQuantity) {
-        this.productId = productId;
-        this.name = name;
-        this.price = price;
-        this.stockQuantity = stockQuantity;
+        setProductId(productId);
+        setName(name);
+        setPrice(price);
+        setStockQuantity(stockQuantity);
     }
 
-    // 3. Default constructor
     public Product() {
         this.productId = 0;
         this.name = "Unknown Product";
@@ -24,67 +23,92 @@ public class Product {
         this.stockQuantity = 0;
     }
 
-    // 4. Getters
-    public int getProductId() {
-        return productId;
-    }
+    // -------- GETTERS --------
+    public int getProductId() { return productId; }
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+    public int getStockQuantity() { return stockQuantity; }
 
-    public String getName() {
-        return name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public int getStockQuantity() {
-        return stockQuantity;
-    }
-
-    // 5. Setters
+    // -------- SETTERS (VALIDATION) --------
     public void setProductId(int productId) {
-        this.productId = productId;
+        if (productId > 0) {
+            this.productId = productId;
+        } else {
+            System.out.println("Warning: Product ID must be positive! Setting to 0.");
+            this.productId = 0;
+        }
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name.trim();
+        } else {
+            System.out.println("Warning: Product name cannot be empty! Keeping previous value.");
+        }
     }
 
     public void setPrice(double price) {
-        this.price = price;
+        if (price >= 0) {
+            this.price = price;
+        } else {
+            System.out.println("Warning: Price cannot be negative! Setting to 0.");
+            this.price = 0.0;
+        }
     }
 
     public void setStockQuantity(int stockQuantity) {
-        this.stockQuantity = stockQuantity;
+        if (stockQuantity >= 0) {
+            this.stockQuantity = stockQuantity;
+        } else {
+            System.out.println("Warning: Stock cannot be negative! Setting to 0.");
+            this.stockQuantity = 0;
+        }
     }
 
-    // 6. Business logic methods
+    // -------- METHODS TO BE OVERRIDDEN (PARENT MIN 3 METHODS) --------
+    // Action/work method
+    public void handle() {
+        System.out.println(name + " is being handled as a general product.");
+    }
+
+    // Another method to override
+    public String getType() {
+        return "General Product";
+    }
+
+    // Parent method not necessarily overridden
     public boolean isInStock() {
         return stockQuantity > 0;
     }
 
-    public void restock(int amount) {
-        if (amount > 0) {
-            stockQuantity += amount;
-        }
-    }
-
+    // -------- EXTRA PARENT METHODS --------
     public boolean sell(int amount) {
-        if (amount <= 0) return false;
-        if (amount > stockQuantity) return false;
-
+        if (amount <= 0) {
+            System.out.println("Warning: Sell amount must be positive!");
+            return false;
+        }
+        if (amount > stockQuantity) {
+            System.out.println("Warning: Not enough stock!");
+            return false;
+        }
         stockQuantity -= amount;
         return true;
     }
 
-    // 7. toString method
+    public void restock(int amount) {
+        if (amount > 0) stockQuantity += amount;
+        else System.out.println("Warning: Restock amount must be positive!");
+    }
+
+    public String getFormattedPrice() {
+        return String.format("%.2f KZT", price);
+    }
+
     @Override
     public String toString() {
-        return "Product{" +
-                "productId=" + productId +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", stockQuantity=" + stockQuantity +
-                '}';
+        return "[" + getType() + "] " + name +
+                " (ID: " + productId +
+                ", Price: " + String.format("%.2f", price) +
+                ", Stock: " + stockQuantity + ")";
     }
 }

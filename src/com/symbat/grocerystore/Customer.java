@@ -2,21 +2,21 @@ package com.symbat.grocerystore;
 
 public class Customer {
 
-    // 1. Private fields
+    // -------- FIELDS (ENCAPSULATION) --------
     private int customerId;
     private String name;
-    private String membershipLevel;
+    private String membershipLevel; // Regular / Gold / VIP
     private double totalPurchases;
 
-    // 2. Parameterized constructor
+    // -------- CONSTRUCTORS --------
+    // IMPORTANT: use setters inside constructor to apply validation
     public Customer(int customerId, String name, String membershipLevel, double totalPurchases) {
-        this.customerId = customerId;
-        this.name = name;
-        this.membershipLevel = membershipLevel;
-        this.totalPurchases = totalPurchases;
+        setCustomerId(customerId);
+        setName(name);
+        setMembershipLevel(membershipLevel);
+        setTotalPurchases(totalPurchases);
     }
 
-    // 3. Default constructor
     public Customer() {
         this.customerId = 0;
         this.name = "Unknown Customer";
@@ -24,44 +24,62 @@ public class Customer {
         this.totalPurchases = 0.0;
     }
 
-    // 4. Getters
-    public int getCustomerId() {
-        return customerId;
-    }
+    // -------- GETTERS --------
+    public int getCustomerId() { return customerId; }
+    public String getName() { return name; }
+    public String getMembershipLevel() { return membershipLevel; }
+    public double getTotalPurchases() { return totalPurchases; }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getMembershipLevel() {
-        return membershipLevel;
-    }
-
-    public double getTotalPurchases() {
-        return totalPurchases;
-    }
-
-    // 5. Setters
+    // -------- SETTERS (WITH VALIDATION) --------
     public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+        if (customerId > 0) {
+            this.customerId = customerId;
+        } else {
+            System.out.println("Warning: Customer ID must be positive! Setting to 0.");
+            this.customerId = 0;
+        }
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name.trim();
+        } else {
+            System.out.println("Warning: Customer name cannot be empty! Keeping previous value.");
+        }
     }
 
     public void setMembershipLevel(String membershipLevel) {
-        this.membershipLevel = membershipLevel;
+        if (membershipLevel == null) {
+            System.out.println("Warning: Membership cannot be null! Setting to Regular.");
+            this.membershipLevel = "Regular";
+            return;
+        }
+
+        String level = membershipLevel.trim().toLowerCase();
+        if (level.equals("vip")) this.membershipLevel = "VIP";
+        else if (level.equals("gold")) this.membershipLevel = "Gold";
+        else if (level.equals("regular")) this.membershipLevel = "Regular";
+        else {
+            System.out.println("Warning: Unknown membership '" + membershipLevel + "'. Setting to Regular.");
+            this.membershipLevel = "Regular";
+        }
     }
 
     public void setTotalPurchases(double totalPurchases) {
-        this.totalPurchases = totalPurchases;
+        if (totalPurchases >= 0) {
+            this.totalPurchases = totalPurchases;
+        } else {
+            System.out.println("Warning: Total purchases cannot be negative! Setting to 0.");
+            this.totalPurchases = 0.0;
+        }
     }
 
-    // 6. Business logic methods
+    // -------- BUSINESS METHODS --------
     public void addPurchase(double amount) {
         if (amount > 0) {
             totalPurchases += amount;
+        } else {
+            System.out.println("Warning: Purchase amount must be positive!");
         }
     }
 
@@ -75,14 +93,14 @@ public class Customer {
         return 0.0;
     }
 
-    // 7. toString method
+    // -------- TO STRING --------
     @Override
     public String toString() {
         return "Customer{" +
                 "customerId=" + customerId +
                 ", name='" + name + '\'' +
                 ", membershipLevel='" + membershipLevel + '\'' +
-                ", totalPurchases=" + totalPurchases +
+                ", totalPurchases=" + String.format("%.2f", totalPurchases) +
                 '}';
     }
 }

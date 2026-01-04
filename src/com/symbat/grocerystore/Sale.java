@@ -2,21 +2,21 @@ package com.symbat.grocerystore;
 
 public class Sale {
 
-    // 1. Private fields
+    // -------- FIELDS (ENCAPSULATION) --------
     private int saleId;
     private String customerName;
     private double totalAmount;
     private String date;
 
-    // 2. Parameterized constructor
+    // -------- CONSTRUCTORS --------
+    // IMPORTANT: use setters inside constructor to apply validation
     public Sale(int saleId, String customerName, double totalAmount, String date) {
-        this.saleId = saleId;
-        this.customerName = customerName;
-        this.totalAmount = totalAmount;
-        this.date = date;
+        setSaleId(saleId);
+        setCustomerName(customerName);
+        setTotalAmount(totalAmount);
+        setDate(date);
     }
 
-    // 3. Default constructor
     public Sale() {
         this.saleId = 0;
         this.customerName = "Unknown";
@@ -24,46 +24,65 @@ public class Sale {
         this.date = "N/A";
     }
 
-    // 4. Getters
-    public int getSaleId() {
-        return saleId;
-    }
+    // -------- GETTERS --------
+    public int getSaleId() { return saleId; }
+    public String getCustomerName() { return customerName; }
+    public double getTotalAmount() { return totalAmount; }
+    public String getDate() { return date; }
 
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public double getTotalAmount() {
-        return totalAmount;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    // 5. Setters
+    // -------- SETTERS (WITH VALIDATION) --------
     public void setSaleId(int saleId) {
-        this.saleId = saleId;
+        if (saleId > 0) {
+            this.saleId = saleId;
+        } else {
+            System.out.println("Warning: Sale ID must be positive! Setting to 0.");
+            this.saleId = 0;
+        }
     }
 
     public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+        if (customerName != null && !customerName.trim().isEmpty()) {
+            this.customerName = customerName.trim();
+        } else {
+            System.out.println("Warning: Customer name cannot be empty! Keeping previous value.");
+        }
     }
 
     public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
+        if (totalAmount >= 0) {
+            this.totalAmount = totalAmount;
+        } else {
+            System.out.println("Warning: Total amount cannot be negative! Setting to 0.");
+            this.totalAmount = 0.0;
+        }
     }
 
     public void setDate(String date) {
-        this.date = date;
+        if (date != null && !date.trim().isEmpty()) {
+            this.date = date.trim();
+        } else {
+            System.out.println("Warning: Date cannot be empty! Setting to N/A.");
+            this.date = "N/A";
+        }
     }
 
-    // 6. Business logic methods
+    // -------- BUSINESS METHODS --------
     public void addItem(Product product, int quantity) {
-        if (product != null && quantity > 0 && product.sell(quantity)) {
+        if (product == null) {
+            System.out.println("Warning: Product is null!");
+            return;
+        }
+        if (quantity <= 0) {
+            System.out.println("Warning: Quantity must be positive!");
+            return;
+        }
+
+        boolean sold = product.sell(quantity);
+        if (sold) {
             totalAmount += product.getPrice() * quantity;
         }
     }
+
     public double calculateTotal() {
         return totalAmount;
     }
@@ -73,13 +92,13 @@ public class Sale {
         return totalAmount * (1 - customer.getDiscountRate());
     }
 
-    // 7. toString method
+    // -------- TO STRING --------
     @Override
     public String toString() {
         return "Sale{" +
                 "saleId=" + saleId +
                 ", customerName='" + customerName + '\'' +
-                ", totalAmount=" + totalAmount +
+                ", totalAmount=" + String.format("%.2f", totalAmount) +
                 ", date='" + date + '\'' +
                 '}';
     }
