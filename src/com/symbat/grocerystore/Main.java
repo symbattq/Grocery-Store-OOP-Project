@@ -9,4 +9,3 @@ public class Main {
         menu.run();
     }
 }
-3
