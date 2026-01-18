@@ -1,14 +1,12 @@
-package com.symbat.grocerystore;
+package com.symbat.grocerystore.model;
 
-public class Product {
+public abstract class Product implements Storable {
 
-    // -------- PARENT PROTECTED FIELDS (MIN 4) --------
     protected int productId;
     protected String name;
     protected double price;
     protected int stockQuantity;
 
-    // -------- CONSTRUCTORS --------
     public Product(int productId, String name, double price, int stockQuantity) {
         setProductId(productId);
         setName(name);
@@ -23,81 +21,71 @@ public class Product {
         this.stockQuantity = 0;
     }
 
-    // -------- GETTERS --------
     public int getProductId() { return productId; }
     public String getName() { return name; }
     public double getPrice() { return price; }
     public int getStockQuantity() { return stockQuantity; }
 
-    // -------- SETTERS (VALIDATION) --------
+    //setters throw exceptions
     public void setProductId(int productId) {
-        if (productId > 0) {
-            this.productId = productId;
-        } else {
-            System.out.println("Warning: Product ID must be positive! Setting to 0.");
-            this.productId = 0;
+        if (productId <= 0) {
+            throw new IllegalArgumentException("Product ID must be positive: " + productId);
         }
+        this.productId = productId;
     }
 
     public void setName(String name) {
-        if (name != null && !name.trim().isEmpty()) {
-            this.name = name.trim();
-        } else {
-            System.out.println("Warning: Product name cannot be empty! Keeping previous value.");
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Product name cannot be empty");
         }
+        this.name = name.trim();
     }
 
     public void setPrice(double price) {
-        if (price >= 0) {
-            this.price = price;
-        } else {
-            System.out.println("Warning: Price cannot be negative! Setting to 0.");
-            this.price = 0.0;
+        if (price < 0) {
+            throw new IllegalArgumentException("Price cannot be negative: " + price);
         }
+        this.price = price;
     }
 
     public void setStockQuantity(int stockQuantity) {
-        if (stockQuantity >= 0) {
-            this.stockQuantity = stockQuantity;
-        } else {
-            System.out.println("Warning: Stock cannot be negative! Setting to 0.");
-            this.stockQuantity = 0;
+        if (stockQuantity < 0) {
+            throw new IllegalArgumentException("Stock cannot be negative: " + stockQuantity);
         }
+        this.stockQuantity = stockQuantity;
     }
 
-    // -------- METHODS TO BE OVERRIDDEN (PARENT MIN 3 METHODS) --------
-    // Action/work method
+    //abstract method
+    public abstract String getStorageInfo();
+
     public void handle() {
         System.out.println(name + " is being handled as a general product.");
     }
 
-    // Another method to override
     public String getType() {
         return "General Product";
     }
 
-    // Parent method not necessarily overridden
     public boolean isInStock() {
         return stockQuantity > 0;
     }
 
-    // -------- EXTRA PARENT METHODS --------
     public boolean sell(int amount) {
         if (amount <= 0) {
-            System.out.println("Warning: Sell amount must be positive!");
-            return false;
+            throw new IllegalArgumentException("Sell amount must be positive: " + amount);
         }
         if (amount > stockQuantity) {
-            System.out.println("Warning: Not enough stock!");
-            return false;
+            throw new IllegalArgumentException("Not enough stock. Available: " + stockQuantity);
         }
         stockQuantity -= amount;
         return true;
     }
 
     public void restock(int amount) {
-        if (amount > 0) stockQuantity += amount;
-        else System.out.println("Warning: Restock amount must be positive!");
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Restock amount must be positive: " + amount);
+        }
+        stockQuantity += amount;
     }
 
     public String getFormattedPrice() {

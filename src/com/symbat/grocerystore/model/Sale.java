@@ -1,15 +1,12 @@
-package com.symbat.grocerystore;
+package com.symbat.grocerystore.model;
 
 public class Sale {
 
-    // -------- FIELDS (ENCAPSULATION) --------
     private int saleId;
     private String customerName;
     private double totalAmount;
     private String date;
 
-    // -------- CONSTRUCTORS --------
-    // IMPORTANT: use setters inside constructor to apply validation
     public Sale(int saleId, String customerName, double totalAmount, String date) {
         setSaleId(saleId);
         setCustomerName(customerName);
@@ -18,69 +15,56 @@ public class Sale {
     }
 
     public Sale() {
-        this.saleId = 0;
+        this.saleId = 1;
         this.customerName = "Unknown";
         this.totalAmount = 0.0;
         this.date = "N/A";
     }
 
-    // -------- GETTERS --------
     public int getSaleId() { return saleId; }
     public String getCustomerName() { return customerName; }
     public double getTotalAmount() { return totalAmount; }
     public String getDate() { return date; }
 
-    // -------- SETTERS (WITH VALIDATION) --------
+    // Week 6: setters throw exceptions
     public void setSaleId(int saleId) {
-        if (saleId > 0) {
-            this.saleId = saleId;
-        } else {
-            System.out.println("Warning: Sale ID must be positive! Setting to 0.");
-            this.saleId = 0;
+        if (saleId <= 0) {
+            throw new IllegalArgumentException("Sale ID must be positive: " + saleId);
         }
+        this.saleId = saleId;
     }
 
     public void setCustomerName(String customerName) {
-        if (customerName != null && !customerName.trim().isEmpty()) {
-            this.customerName = customerName.trim();
-        } else {
-            System.out.println("Warning: Customer name cannot be empty! Keeping previous value.");
+        if (customerName == null || customerName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Customer name cannot be empty");
         }
+        this.customerName = customerName.trim();
     }
 
     public void setTotalAmount(double totalAmount) {
-        if (totalAmount >= 0) {
-            this.totalAmount = totalAmount;
-        } else {
-            System.out.println("Warning: Total amount cannot be negative! Setting to 0.");
-            this.totalAmount = 0.0;
+        if (totalAmount < 0) {
+            throw new IllegalArgumentException("Total amount cannot be negative: " + totalAmount);
         }
+        this.totalAmount = totalAmount;
     }
 
     public void setDate(String date) {
-        if (date != null && !date.trim().isEmpty()) {
-            this.date = date.trim();
-        } else {
-            System.out.println("Warning: Date cannot be empty! Setting to N/A.");
-            this.date = "N/A";
+        if (date == null || date.trim().isEmpty()) {
+            throw new IllegalArgumentException("Date cannot be empty");
         }
+        this.date = date.trim();
     }
 
-    // -------- BUSINESS METHODS --------
     public void addItem(Product product, int quantity) {
         if (product == null) {
-            System.out.println("Warning: Product is null!");
-            return;
+            throw new IllegalArgumentException("Product cannot be null");
         }
         if (quantity <= 0) {
-            System.out.println("Warning: Quantity must be positive!");
-            return;
+            throw new IllegalArgumentException("Quantity must be positive: " + quantity);
         }
 
-        boolean sold = product.sell(quantity);
-        if (sold) {
-            totalAmount += product.getPrice() * quantity;
-        }
+        product.sell(quantity); // may throw IllegalArgumentException
+        totalAmount += product.getPrice() * quantity;
     }
 
     public double calculateTotal() {
@@ -92,7 +76,6 @@ public class Sale {
         return totalAmount * (1 - customer.getDiscountRate());
     }
 
-    // -------- TO STRING --------
     @Override
     public String toString() {
         return "Sale{" +

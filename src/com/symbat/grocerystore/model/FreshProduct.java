@@ -1,12 +1,10 @@
-package com.symbat.grocerystore;
+package com.symbat.grocerystore.model;
 
 public class FreshProduct extends Product {
 
-    // -------- CHILD FIELDS --------
     private int daysToExpire;
     private String farmName;
 
-    // -------- CONSTRUCTOR --------
     public FreshProduct(int productId, String name, double price, int stockQuantity,
                         int daysToExpire, String farmName) {
         super(productId, name, price, stockQuantity);
@@ -14,7 +12,6 @@ public class FreshProduct extends Product {
         setFarmName(farmName);
     }
 
-    // -------- GETTERS --------
     public int getDaysToExpire() {
         return daysToExpire;
     }
@@ -23,18 +20,21 @@ public class FreshProduct extends Product {
         return farmName;
     }
 
-    // -------- SETTERS (WITH VALIDATION) --------
+    // Setters throw exceptions
     public void setDaysToExpire(int daysToExpire) {
-        this.daysToExpire = Math.max(daysToExpire, 0);
+        if (daysToExpire < 0) {
+            throw new IllegalArgumentException("Days to expire cannot be negative: " + daysToExpire);
+        }
+        this.daysToExpire = daysToExpire;
     }
 
     public void setFarmName(String farmName) {
-        this.farmName = (farmName != null && !farmName.trim().isEmpty())
-                ? farmName
-                : "Unknown Farm";
+        if (farmName == null || farmName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Farm name cannot be empty");
+        }
+        this.farmName = farmName.trim();
     }
 
-    // -------- OVERRIDDEN METHODS --------
     @Override
     public void handle() {
         System.out.println("Fresh product " + name +
@@ -46,7 +46,12 @@ public class FreshProduct extends Product {
         return "Fresh Product";
     }
 
-    // -------- CHILD METHODS --------
+    // Implements abstract method from Product
+    @Override
+    public String getStorageInfo() {
+        return "Keep refrigerated. Expires in " + daysToExpire + " days.";
+    }
+
     public boolean isExpired() {
         return daysToExpire == 0;
     }
@@ -57,7 +62,6 @@ public class FreshProduct extends Product {
         }
     }
 
-    // -------- TO STRING --------
     @Override
     public String toString() {
         return super.toString() +

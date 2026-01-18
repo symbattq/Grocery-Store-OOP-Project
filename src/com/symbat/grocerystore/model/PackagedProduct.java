@@ -1,12 +1,10 @@
-package com.symbat.grocerystore;
+package com.symbat.grocerystore.model;
 
 public class PackagedProduct extends Product {
 
-    // -------- CHILD FIELDS --------
     private double packageWeight;
     private boolean recyclable;
 
-    // -------- CONSTRUCTOR --------
     public PackagedProduct(int productId, String name, double price, int stockQuantity,
                            double packageWeight, boolean recyclable) {
         super(productId, name, price, stockQuantity);
@@ -14,7 +12,6 @@ public class PackagedProduct extends Product {
         setRecyclable(recyclable);
     }
 
-    // -------- GETTERS --------
     public double getPackageWeight() {
         return packageWeight;
     }
@@ -23,16 +20,18 @@ public class PackagedProduct extends Product {
         return recyclable;
     }
 
-    // -------- SETTERS (WITH VALIDATION) --------
+    // Setters throw exceptions
     public void setPackageWeight(double packageWeight) {
-        this.packageWeight = packageWeight > 0 ? packageWeight : 0.0;
+        if (packageWeight <= 0) {
+            throw new IllegalArgumentException("Package weight must be positive: " + packageWeight);
+        }
+        this.packageWeight = packageWeight;
     }
 
     public void setRecyclable(boolean recyclable) {
         this.recyclable = recyclable;
     }
 
-    // -------- OVERRIDDEN METHODS --------
     @Override
     public void handle() {
         System.out.println("Packaged product " + name +
@@ -44,7 +43,12 @@ public class PackagedProduct extends Product {
         return "Packaged Product";
     }
 
-    // -------- CHILD METHODS --------
+    // Implements abstract method from Product
+    @Override
+    public String getStorageInfo() {
+        return "Store in dry place. Weight: " + packageWeight + " kg.";
+    }
+
     public boolean isHeavyPackage() {
         return packageWeight > 2.0;
     }
@@ -53,11 +57,10 @@ public class PackagedProduct extends Product {
         return recyclable ? "Eco-friendly packaging" : "Regular packaging";
     }
 
-    // -------- TO STRING --------
     @Override
     public String toString() {
         return super.toString() +
                 " | Weight: " + packageWeight +
-                "kg, Recyclable: " + recyclable;
+                " kg, Recyclable: " + recyclable;
     }
 }
