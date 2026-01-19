@@ -1,4 +1,4 @@
-package com.symbat.grocerystore.menu;
+package menu;
 
 public interface Menu {
     void displayMenu();

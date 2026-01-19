@@ -1,4 +1,4 @@
-package com.symbat.grocerystore.model;
+package model;
 
 public interface Storable {
     String getStorageInfo();

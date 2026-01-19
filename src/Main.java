@@ -1,7 +1,5 @@
-package com.symbat.grocerystore;
-
-import com.symbat.grocerystore.menu.Menu;
-import com.symbat.grocerystore.menu.MenuManager;
+import menu.Menu;
+import menu.MenuManager;
 
 public class Main {
     public static void main(String[] args) {
@@ -9,4 +7,3 @@ public class Main {
         menu.run();
     }
 }
-3

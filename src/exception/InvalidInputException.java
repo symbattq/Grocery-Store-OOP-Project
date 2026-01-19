@@ -1,4 +1,4 @@
-package com.symbat.grocerystore.exception;
+package exception;
 
 public class InvalidInputException extends RuntimeException {
 

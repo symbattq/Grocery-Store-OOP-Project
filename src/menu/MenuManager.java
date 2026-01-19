@@ -1,7 +1,7 @@
-package com.symbat.grocerystore.menu;
+package menu;
 
-import com.symbat.grocerystore.exception.InvalidInputException;
-import com.symbat.grocerystore.model.*;
+import exception.InvalidInputException;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.Scanner;
